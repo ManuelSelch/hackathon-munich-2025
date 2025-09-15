@@ -6,7 +6,7 @@ import pathlib
 load_dotenv()
 
 OUTPUT_DIR = os.getenv("OUTPUT_DIR")
-RAW_DATA_DIR = os.getenv("OUTRAW_DATA_DIRPUT_DIR")
+RAW_DATA_DIR = os.getenv("RAW_DATA_DIR")
 RAW_DATA_DIR = pathlib.Path(RAW_DATA_DIR)
 TASK_LABEL = "task-label"
 
