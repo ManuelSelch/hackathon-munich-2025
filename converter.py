@@ -5,7 +5,7 @@ RAW_DATA_DIR = "/data/20250913_111243"
 OUTPUT_DIR = "/out"
 TASK_LABEL = "pick up the red block"
 
-cfg = PipelineConfig(
+config = PipelineConfig(
     task_name=TASK_LABEL,
     include_tcp_poses=True,
     include_rgb_images=True,
@@ -20,4 +20,4 @@ print(f"Input path:  {RAW_DATA_DIR}")
 print(f"Output path: {OUTPUT_DIR}")
 
 from example_policies.data_ops.dataset_conversion import convert_episodes
-convert_episodes(RAW_DATA_DIR, OUTPUT_DIR, {})
+convert_episodes(RAW_DATA_DIR, OUTPUT_DIR, config)
