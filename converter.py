@@ -1,9 +1,11 @@
-import pathlib
+# from dotenv import load_dotenv
 from example_policies.data_ops.config.pipeline_config import PipelineConfig, ActionLevel
+import pathlib
 
-RAW_DATA_DIR = "/data/20250913_111243"
-OUTPUT_DIR = "/data/out"
+OUTPUT_DIR = "/home/jovyan/out"
 TASK_LABEL = "pick up the red block"
+RAW_DATA_DIR = "/data/20250913_111243"
+RAW_DATA_DIR = pathlib.Path(RAW_DATA_DIR)
 
 config = PipelineConfig(
     task_name=TASK_LABEL,
@@ -18,6 +20,8 @@ config = PipelineConfig(
 
 print(f"Input path:  {RAW_DATA_DIR}")
 print(f"Output path: {OUTPUT_DIR}")
+
+
 
 from example_policies.data_ops.dataset_conversion import convert_episodes
 convert_episodes(RAW_DATA_DIR, OUTPUT_DIR, config)
