@@ -1,4 +1,3 @@
-import pathlib
 import os
 from dotenv import load_dotenv
 from example_policies.robot_deploy.deploy import deploy_policy
