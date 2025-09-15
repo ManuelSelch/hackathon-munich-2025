@@ -2,7 +2,7 @@ import pathlib
 from example_policies.data_ops.config.pipeline_config import PipelineConfig, ActionLevel
 
 RAW_DATA_DIR = "/data/20250913_111243"
-OUTPUT_DIR = "/out"
+OUTPUT_DIR = "/home/jovyan/out/"
 TASK_LABEL = "pick up the red block"
 
 config = PipelineConfig(
