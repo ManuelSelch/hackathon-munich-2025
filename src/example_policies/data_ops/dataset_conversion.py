@@ -119,7 +119,8 @@ def convert_episodes(
             )
             continue
 
-    with open(output_dir / "meta" / "episode_mapping.json", "w", encoding="utf-8") as f:
+    # with open(output_dir / "meta" / "episode_mapping.json", "w", encoding="utf-8") as f:
+    with open(output_dir + "/meta" + "/episode_mapping.json", "w", encoding="utf-8") as f:
         json.dump(episode_counter_path_dict, f, indent=2)
 
     with open(output_dir / "meta" / "pipeline_config.json", "w", encoding="utf-8") as f:
