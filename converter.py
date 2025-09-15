@@ -1,6 +1,9 @@
 import os
+from dotenv import load_dotenv
 from example_policies.data_ops.config.pipeline_config import PipelineConfig, ActionLevel
 import pathlib
+
+load_dotenv()
 
 OUTPUT_DIR = os.getenv("OUTPUT_DIR")
 RAW_DATA_DIR = os.getenv("OUTRAW_DATA_DIRPUT_DIR")
