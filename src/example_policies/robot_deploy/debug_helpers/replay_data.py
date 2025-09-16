@@ -87,7 +87,7 @@ def inference_loop(
 
     batch = next(iterator)
     state = batch["observation.state"]
-    print("start state: " + state)
+    print("start state: " + [state].cpu().numpy())
     action = np.concatenate([state[0, :14].cpu().numpy(), [0, 0]]).astype(np.float32)
 
     # add batch axis
