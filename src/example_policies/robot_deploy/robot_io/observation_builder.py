@@ -76,6 +76,12 @@ class ObservationBuilder:
         gripper_state = self._get_gripper_state(snapshot_response)
         last_command = self._get_last_command(tcp_state, last_command)
 
+        print("last command", last_command.shape)
+        if len(last_command) < 14:
+            #last_command = np.pad(last_command, (0, 14 - len(last_command)), mode="constant")
+            print('its still to small!!')
+        
+
         state_array = []
         if self.include_joint_state:
             state_array.append(joint_state)
@@ -166,6 +172,7 @@ class ObservationBuilder:
         gripper_positions = [
             snapshot.joints[name].position for name in gripper_joint_names
         ]
+        print(len(gripper_positions))
         return np.array(gripper_positions, dtype=np.float32)
 
     def _get_last_command(self, tcp_state: np.ndarray, last_command) -> np.ndarray:

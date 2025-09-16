@@ -88,9 +88,9 @@ def inference_loop(
     batch = next(iterator)
     state = batch["observation.state"]
     state_np = state[0].cpu().numpy() if torch.is_tensor(state) else state[0]
-    # action = np.concatenate([state_np[0, :14].cpu().numpy(), [0, 0]]).astype(np.float32)
-    action = state_np[:14].astype(np.float32)
-
+    action = np.concatenate([state_np[ :14], [0, 0]]).astype(np.float32)
+    #action = state_np[:14].astype(np.float32)
+    print(action.shape)
     # add batch axis
     action = action[None, :]
 
@@ -109,7 +109,7 @@ def inference_loop(
     input("Press Enter to continue...")
     # Inference Loop
     print("Starting inference loop...")
-    hz = 1.0
+    hz = 5.0
     period = 1.0 / hz
     while not done:
         start_time = time.time()
@@ -120,9 +120,9 @@ def inference_loop(
 
             action = batch["action"]
 
-            input("Press Enter to send next action...")
+            # input("Press Enter to send next action...")
 
-            model_to_action_trans.action_mode = ActionMode.ABS_TCP
+            model_to_action_trans.action_mode = ActionMode.DELTA_TCP
             action = model_to_action_trans.translate(action, observation)
             print_info(step, observation, action)
 
@@ -135,7 +135,7 @@ def inference_loop(
         print(sleep_duration)
         # wait for input
         # input("Press Enter to continue...")
-        time.sleep(max(0.0, sleep_duration))
+        # time.sleep(max(0.0, sleep_duration))
 
         step += 1
 
