@@ -88,7 +88,7 @@ def inference_loop(
     batch = next(iterator)
     state = batch["observation.state"]
     state_np = state[0].cpu().numpy() if torch.is_tensor(state) else state[0]
-    action = np.concatenate([state[0, :14].cpu().numpy(), [0, 0]]).astype(np.float32)
+    action = np.concatenate([state_np[0, :14].cpu().numpy(), [0, 0]]).astype(np.float32)
 
     # add batch axis
     action = action[None, :]
@@ -103,10 +103,7 @@ def inference_loop(
     input("Press Enter to move robot to start...")
 
     # move to abs start pos
-    action_tensor = torch.from_numpy(action)
-    model_to_action_trans.action_mode = ActionMode.ABS_TCP
-    action_tensor = model_to_action_trans.translate(action_tensor, observation)
-    robot_interface.send_action(action_tensor, ActionMode.ABS_TCP)
+    robot_interface.send_action(torch.from_numpy(action), ActionMode.ABS_TCP)
 
     input("Press Enter to continue...")
     # Inference Loop
