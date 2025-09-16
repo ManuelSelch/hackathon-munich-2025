@@ -88,7 +88,8 @@ def inference_loop(
     batch = next(iterator)
     state = batch["observation.state"]
     state_np = state[0].cpu().numpy() if torch.is_tensor(state) else state[0]
-    action = np.concatenate([state_np[0, :14].cpu().numpy(), [0, 0]]).astype(np.float32)
+    # action = np.concatenate([state_np[0, :14].cpu().numpy(), [0, 0]]).astype(np.float32)
+    action = state_np[:14].astype(np.float32)
 
     # add batch axis
     action = action[None, :]
