@@ -136,6 +136,17 @@ def inference_loop(
 
         step += 1
 
+def replay(server: str, data_dir: str, episode: int):
+    channel = grpc.insecure_channel(server)
+    stub = robot_service_pb2_grpc.RobotServiceStub(channel)
+    try:
+        inference_loop(data_dir, stub, episode)
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        raise e
+    finally:
+        channel.close()
+        print("Connection closed.")
 
 def main():
     parser = argparse.ArgumentParser(description="Robot service client")

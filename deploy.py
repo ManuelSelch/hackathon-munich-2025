@@ -17,4 +17,14 @@ print(f"Action level from config: '{cfg.action_level}'")
 print(f"Attempting to load policy from: {CHECKPOINT_DIR}")
 print(f"Robot server endpoint: {SERVER_ENDPOINT}")
 print(f"Inference frequency: {INFERENCE_FREQUENCY_HZ} Hz")
+
+# task 1: grap object
+# policy A
 deploy_policy(policy, cfg, hz=INFERENCE_FREQUENCY_HZ, server=SERVER_ENDPOINT)
+print("grap object done")
+
+# task 2: place object
+# -> algorithm
+
+# task 3: ..
+# policy B
