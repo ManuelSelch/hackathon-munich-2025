@@ -136,7 +136,7 @@ def inference_loop(
 
         step += 1
 
-def replay(server: str, data_dir: str, episode: int):
+def replay(server: str, data_dir: Path, episode: int):
     channel = grpc.insecure_channel(server)
     stub = robot_service_pb2_grpc.RobotServiceStub(channel)
     try:
