@@ -115,7 +115,7 @@ def act_config(
         # Training hyperparameters
         batch_size=batch_size,
         lr=2e-5,
-        steps=800_000,
+        steps=10_000,
         save_freq=10_000,
         # Enable Weights & Biases for experiment tracking
         enable_wandb=True,

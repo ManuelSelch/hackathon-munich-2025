@@ -12,7 +12,7 @@ lerobot_patches.apply_patches()
 
 
 INFERENCE_FREQUENCY_HZ: float = 1.0
-SERVER_ENDPOINT = "localhost:50051"
+SERVER_ENDPOINT = "192.168.0.206:50051"
 
 class Robot:
     def __init__(self):
@@ -24,7 +24,7 @@ class Robot:
     def deploy(self, checkpoint_dir: str):
         policy, cfg = policy_loader.load_policy(checkpoint_dir)
         print("Policy loaded successfully!")
-        print(f"Action level from config: '{cfg.action_level}'")
+        # print(f"Action level from config: '{cfg.action_level}'")
 
         print(f"Attempting to load policy from: {checkpoint_dir}")
         print(f"Robot server endpoint: {SERVER_ENDPOINT}")
