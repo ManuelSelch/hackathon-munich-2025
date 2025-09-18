@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # input: viddeo
-video_path = "test-video.mp4"
+video_path = "test-video-h264.mp4"
 video = cv2.VideoCapture(video_path)
 
 # parse video parameters
@@ -11,7 +11,7 @@ width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 out = cv2.VideoWriter(
-    video_path,
+    "output.mp4",
     cv2.VideoWriter_fourcc(*"mp4v"),
     fps,
     (width, height)
@@ -31,13 +31,13 @@ def mark_frame(frame):
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # skip if no contours found
-    if contours is None: return
+    if not contours: return frame
 
     # ROI = box around yellow colors
     c = max(contours, key=cv2.contourArea)
     x, y, w, h = cv2.boundingRect(c)
 
-    cv2.drawContours(frame, [c], -1, (0, 0, 255), 2)
+    cv2.drawContours(frame, [c], -1, (0, 0, 255), 10)
 
     # crop ROI
     roi = frame[y:y+h, x:x+w]
@@ -54,17 +54,17 @@ def mark_frame(frame):
         minDist=1,
         param1=5,
         param2=30,
-        minRadius=10,
+        minRadius=2,
         maxRadius=20
     )
 
     # skip if no circles found
-    if circles is None: return
+    if circles is None: return frame
 
     # mark circles
-    circles = np.uint16(np.around(circles))
-    for (cx, cy, r) in circles[0, :]:
-        cv2.circle(frame, (x + cx, y + cy), r, (0, 255, 0), 50)
+    # circles = np.uint16(np.around(circles))
+    # for (cx, cy, r) in circles[0, :]:
+    #    cv2.circle(frame, (x + cx, y + cy), r, (0, 255, 0), 50)
 
     return frame
 
