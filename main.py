@@ -8,35 +8,8 @@ OUTPUT_DIR = os.getenv("OUTPUT_DIR")
 CHECKPOINT_DIR = os.getenv("CHECKPOINT_DIR")
 
 robot = Robot()
-
-def grapPlateA():
-    robot.deploy(CHECKPOINT_DIR)
-    pass
-
-def placePlateA():
-    robot.replay(OUTPUT_DIR, episode=0)
-
-def grapPlateB():
-    robot.deploy(CHECKPOINT_DIR)
-    pass
-
-def placePlateB():
-    robot.replay(OUTPUT_DIR, episode=1)
-
-def grapScrew():
-    robot.deploy(CHECKPOINT_DIR)
-    pass
-
-def screw():
-    robot.replay(OUTPUT_DIR, episode=2)
-
-def main():
-    grapPlateA()
-    placePlateA()
-    grapPlateB()
-    placePlateB()
-    grapScrew()
-    screw()
-
-# main()
-placePlateA()
+    
+robot.convert(RAW_DATA_DIR, OUTPUT_DIR, "grap object")
+# robot.replay(OUTPUT_DIR, episode=0)
+# robot.train(OUTPUT_DIR)
+# robot.deploy("/home/jovyan/hackathon/outputs/train/2025-09-18/11-14-37_integrated_so3_act")

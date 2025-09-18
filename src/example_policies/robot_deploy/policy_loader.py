@@ -49,8 +49,8 @@ def load_metadata(dir_path: pathlib.Path) -> dict:
     Returns:
         dict: Metadata information
     """
-    # meta_json = dir_path /  "dataset_info.json"
-    meta_json = dir_path /  "meta/info.json"
+    meta_json = dir_path /  "dataset_info.json"
+    # meta_json = dir_path /  "meta/info.json"
     if not meta_json.exists():
         print("Did not find any dataset metadata")
         return load_dataset_info(dir_path)
