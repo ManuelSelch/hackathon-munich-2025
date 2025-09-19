@@ -3,8 +3,8 @@ from robot.workflow import Workflow
 flow = Workflow()
 
 def main():
-    print("🤖 Robot CLI Control")
-    print("Available commands: start <task>, pause, stop, exit")
+    print("robot CLI control")
+    print("available commands: replay <task>, deploy <task>, pause, stop, exit")
 
     while True:
         try:
@@ -15,11 +15,17 @@ def main():
 
             action = cmd[0].lower()
 
-            if action == "start":
+            if action == "replay":
                 if len(cmd) < 2:
-                    print("⚠️ Usage: start <task>")
+                    print("usage: replay <task>")
                 else:
-                    flow.run_task(cmd[1])
+                    flow.run_replay(cmd[1])
+
+            if action == "deploy":
+                if len(cmd) < 2:
+                    print("usage: deploy <task>")
+                else:
+                    flow.run_deploy(cmd[1])
 
             elif action == "pause":
                 # flow.pause_task()
@@ -30,14 +36,14 @@ def main():
                 pass
 
             elif action == "exit":
-                print("👋 Goodbye")
+                print("bye")
                 break
 
             else:
-                print(f"❌ Unknown command: {action}")
+                print(f"unknown command: {action}")
 
         except KeyboardInterrupt:
-            print("\n👋 Exiting...")
+            print("\nexiting...")
             break
 
 if __name__ == "__main__":
