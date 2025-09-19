@@ -133,9 +133,7 @@ def inference_loop(
         elapsed_time = time.time() - start_time
         sleep_duration = period - elapsed_time
         print(sleep_duration)
-        # wait for input
-        # input("Press Enter to continue...")
-        # time.sleep(max(0.0, sleep_duration))
+        time.sleep(max(0.0, sleep_duration))
 
         step += 1
 
