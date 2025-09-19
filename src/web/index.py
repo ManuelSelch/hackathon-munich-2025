@@ -1,8 +1,6 @@
 from flask import Flask, render_template, redirect, url_for
 import threading
-import time
-from robot.robot import Robot
-from robot.workflow import Workflow, tasks
+from robot.workflow import Workflow
 
 app = Flask(__name__)
 
