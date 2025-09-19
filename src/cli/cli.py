@@ -1,10 +1,12 @@
 from robot.workflow import Workflow
+from robot.robot import Robot
 
 flow = Workflow()
+robot = Robot()
 
 def main():
     print("robot CLI control")
-    print("available commands: replay <task> <episode>, deploy <task>, pause, stop, exit")
+    print("available commands: replay <task> <episode>, deploy <task>, convert <data> <task>, pause, stop, exit")
 
     while True:
         try:
@@ -34,6 +36,12 @@ def main():
             elif action == "stop":
                 # flow.stop_task()
                 pass
+
+            elif action == "convert":
+                if len(cmd) < 3:
+                    print("usage: deploy <data> <task>")
+                else:
+                    robot.convert("/data/"+cmd[1], "/home/jovyan/"+cmd[2], cmd[2])
 
             elif action == "exit":
                 print("bye")
