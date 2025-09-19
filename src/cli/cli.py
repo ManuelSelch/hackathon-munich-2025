@@ -4,7 +4,7 @@ flow = Workflow()
 
 def main():
     print("robot CLI control")
-    print("available commands: replay <task>, deploy <task>, pause, stop, exit")
+    print("available commands: replay <task> <episode>, deploy <task>, pause, stop, exit")
 
     while True:
         try:
@@ -16,10 +16,10 @@ def main():
             action = cmd[0].lower()
 
             if action == "replay":
-                if len(cmd) < 2:
-                    print("usage: replay <task>")
+                if len(cmd) < 3:
+                    print("usage: replay <task> <episode>")
                 else:
-                    flow.run_replay("/home/jovyan/"+cmd[1], 0)
+                    flow.run_replay("/home/jovyan/"+cmd[1], int(cmd[2]))
 
             if action == "deploy":
                 if len(cmd) < 2:

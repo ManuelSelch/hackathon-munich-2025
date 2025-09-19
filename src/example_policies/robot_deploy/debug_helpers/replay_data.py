@@ -121,7 +121,9 @@ def inference_loop(
             
             # execute next step
             action = batch["action"]
-            model_to_action_trans.action_mode = ActionMode.DELTA_TCP
+
+            # model_to_action_trans.action_mode = ActionMode.DELTA_TCP
+            model_to_action_trans.action_mode = ActionMode.ABS_TCP
             action = model_to_action_trans.translate(action, observation)
             print_info(step, observation, action)
             robot_interface.send_action(action, model_to_action_trans.action_mode)
