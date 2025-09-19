@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Robot Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        button { padding: 15px 30px; margin: 10px; font-size: 18px; cursor: pointer; }
+        .running { color: green; }
+        .paused { color: orange; }
+        .stopped { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Robot Control Panel</h1>
+
+    <p>Status: 
+        {% if status.running %}
+            {% if status.paused %}
+                <span class="paused">Paused ({{ status.current_task }})</span>
+            {% else %}
+                <span class="running">Running ({{ status.current_task }})</span>
+            {% endif %}
+        {% else %}
+            <span class="stopped">Stopped</span>
+        {% endif %}
+    </p>
+
+    <div>
+        <h2>Start Workflow Steps</h2>
+        <a href="/start/step1"><button>Start Step 1</button></a>
+        <a href="/start/step2"><button>Start Step 2</button></a>
+        <a href="/start/step3"><button>Start Step 3</button></a>
+    </div>
+
+    <div>
+        <h2>Controls</h2>
+        <a href="/pause"><button>{% if status.paused %}Resume{% else %}Pause{% endif %}</button></a>
+        <a href="/stop"><button style="background-color: red; color: white;">Stop</button></a>
+    </div>
+</body>
+</html>

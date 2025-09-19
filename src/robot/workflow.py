@@ -1,13 +1,13 @@
 import multiprocessing
 import time
 from typing import List, Tuple, Literal
-from robot import Robot
+from robot.robot import Robot
 
 TaskType = Literal["deploy", "replay"]
 
 tasks = [
     ("01 pick ecu holder",      "deploy", ("data/01_pickEcuHolder"),  30),
-    ("02 place ecu holder",     "replay", ("data/02_placeEcuHolder"), 30),
+    ("02 place ecu holder",     "replay", ("data/02_placeEcuHolder", 0), 30),
     ("03 pick ecu",             "replay", ("data/03_pickEcu"),        30),
     ("04 place ecu",            "replay", ("data/04_placeEcu"),       30),
     ("05 pick nut",             "deploy", ("data/05_pickNut"),        30),
@@ -21,10 +21,10 @@ class Workflow:
     def __init__(self):
         self.robot = Robot()
 
-    def _run_deploy(self, checkpoint_dir: str):
+    def run_deploy(self, checkpoint_dir: str):
         self.robot.deploy(checkpoint_dir)
 
-    def _run_replay(self, output_dir: str, episode: int):
+    def run_replay(self, output_dir: str, episode: int):
         self.robot.replay(output_dir, episode)
 
     def run_task(self, task_type: TaskType, args: Tuple, duration: float):

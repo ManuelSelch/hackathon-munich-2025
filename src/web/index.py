@@ -1,18 +1,19 @@
 from flask import Flask, render_template, redirect, url_for
 import threading
 import time
+from robot.robot import Robot
 from robot.workflow import Workflow, tasks
 
 app = Flask(__name__)
 
-
+flow = Workflow()
 
 # State variables
 robot_status = {"running": False, "paused": False, "current_task": None}
 lock = threading.Lock()
 
 def run_task(task_name):
-    """Simulate a long-running robot task"""
+    # set mode to running
     with lock:
         robot_status["running"] = True
         robot_status["paused"] = False
@@ -20,18 +21,10 @@ def run_task(task_name):
 
     print(f"[ROBOT] Starting {task_name}...")
 
-    for i in range(10):  # Simulate 10 steps
-        with lock:
-            if not robot_status["running"]:
-                print(f"[ROBOT] Task '{task_name}' stopped.")
-                return
-            while robot_status["paused"]:
-                print(f"[ROBOT] Paused at step {i+1}")
-                time.sleep(1)
+    # trigger step
+    flow.run_replay("data/02_placeEcuHolder", 0)
 
-        print(f"[ROBOT] {task_name} step {i+1}/10")
-        time.sleep(1)
-
+    # set mode to idle
     with lock:
         robot_status["running"] = False
         robot_status["current_task"] = None
@@ -44,7 +37,7 @@ def index():
 @app.route("/start/<task>")
 def start_task(task):
     if not robot_status["running"]:
-        thread = threading.Thread(target=run_task, args=(task,))
+        thread = threading.Thread(target=run_task, args=(task))
         thread.start()
     return redirect(url_for("index"))
 
