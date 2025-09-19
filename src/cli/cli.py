@@ -1,35 +1,44 @@
-import argparse
 from robot.workflow import Workflow
 
 flow = Workflow()
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="CLI to control the robot workflows"
-    )
+    print("🤖 Robot CLI Control")
+    print("Available commands: start <task>, pause, stop, exit")
 
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    while True:
+        try:
+            cmd = input("> ").strip().split()
 
-    # start <task>
-    start_parser = subparsers.add_parser("start", help="Start a workflow step")
-    start_parser.add_argument("task", type=str, help="Task name (e.g., step1, step2)")
+            if not cmd:
+                continue
 
-    # pause
-    subparsers.add_parser("pause", help="Pause the current task")
+            action = cmd[0].lower()
 
-    # stop
-    subparsers.add_parser("stop", help="Stop the current task")
+            if action == "start":
+                if len(cmd) < 2:
+                    print("⚠️ Usage: start <task>")
+                else:
+                    flow.run_task(cmd[1])
 
-    args = parser.parse_args()
+            elif action == "pause":
+                # flow.pause_task()
+                pass
 
-    if args.command == "start":
-        flow.run_task(args.task)
-    elif args.command == "pause":
-        # flow.pause_task()
-        pass
-    elif args.command == "stop":
-        # flow.stop_task()
-        pass
+            elif action == "stop":
+                # flow.stop_task()
+                pass
+
+            elif action == "exit":
+                print("👋 Goodbye")
+                break
+
+            else:
+                print(f"❌ Unknown command: {action}")
+
+        except KeyboardInterrupt:
+            print("\n👋 Exiting...")
+            break
 
 if __name__ == "__main__":
     main()
