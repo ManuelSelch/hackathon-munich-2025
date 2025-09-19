@@ -37,3 +37,8 @@ Start
 
 ```
 
+### Debug
+- format video encoding to h264
+```bash
+ffmpeg -i test-video.mp4 -c:v libx264 -crf 18 -preset fast -pix_fmt yuv420p -c:a copy test-video-h264.mp4
+``

@@ -25,14 +25,6 @@ from example_policies.data_ops.config import argparse_pipeline_config, pipeline_
 from example_policies.data_ops.pipeline.dataset_writer import DatasetWriter
 from example_policies.data_ops.pipeline.frame_buffer import FrameBuffer
 
-def _is_paused(self, joint_velocity: np.ndarray) -> bool:
-    """Checks if the robot is in a paused state."""
-    if np.sum(np.abs(joint_velocity)) < self.cfg.pause_velocity:
-        self.pause_detection_counter += 1
-    else:
-        self.pause_detection_counter = 0
-    return self.pause_detection_counter >= self.cfg.max_pause_frames
-
 def convert_episodes(
     episode_dir: pathlib.Path,
     output_dir: pathlib.Path,
