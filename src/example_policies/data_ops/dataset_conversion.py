@@ -16,7 +16,6 @@ import argparse
 import json
 import pathlib
 import time
-from config.dataset_type import DatasetType
 
 # Workaround for torch / lerobot bug
 import numpy as np
