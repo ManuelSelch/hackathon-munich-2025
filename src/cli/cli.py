@@ -19,7 +19,7 @@ def main():
                 if len(cmd) < 2:
                     print("usage: replay <task>")
                 else:
-                    flow.run_replay(cmd[1])
+                    flow.run_replay(cmd[1], 0)
 
             if action == "deploy":
                 if len(cmd) < 2:
