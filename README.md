@@ -19,17 +19,21 @@
 ```mermaid
 flowchart TD;
 
-pickEcuHolder --> D1{"gripper fully closed?"}
-    D1 -- Yes --> placeEcuHolder
+Start 
+    --> pickEcuHolder 
+    --> D1{"gripper fully closed?"}
     D1 -- No --> pickEcuHolder
-
-placeEcuHolder 
+    D1 -- Yes --> placeEcuHolder 
     --> pickEcu
-    --> placeEcu 
+    --> D2{"camera detects ecu?"}
+    D2 -- No --> pickEcu
+    D2 -- Yes --> placeEcu
     --> pickNutA 
     --> placeNutA 
     --> pickNutB 
     --> placeNutB 
-    --> done
+--> Done
+
+
 ```
 
