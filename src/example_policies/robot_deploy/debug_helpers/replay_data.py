@@ -48,14 +48,6 @@ class FakeConfig:
         )
         self.output_features["action"] = np.asarray(m["features"]["action"]["names"])
 
-def has_reached_target(observation, target, tol=1e-3):
-    print(observation)
-    current = np.array(observation["tcp_pose"])  # e.g. [x, y, z, rx, ry, rz]
-    target = np.array(target)
-    error = np.linalg.norm(current - target)
-    return error < tol
-
-
 def inference_loop(
     data_dir: Path,
     service_stub: robot_service_pb2_grpc.RobotServiceStub,
@@ -135,8 +127,6 @@ def inference_loop(
             # policy._queues["action"].clear()
 
         # wait for execution to finish
-        while not robot_interface.get_observation():
-            time.sleep(0.01)  # small poll delay
         elapsed_time = time.time() - start_time
         sleep_duration = period - elapsed_time
         print(sleep_duration)
