@@ -3,6 +3,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux,python
 
 **/.DS_Store
+**/*.mp4
+**/*.png
 
 ### Linux ###
 *~
