@@ -80,7 +80,6 @@ def inference_loop(
     )
 
     step = 0
-    done = False
 
     iterator = iter(dataloader)
 
@@ -110,21 +109,22 @@ def inference_loop(
     print("Starting inference loop...")
     hz = 1.0
     period = 1.0 / hz
-    while not done:
+    while True:
         start_time = time.time()
         observation = robot_interface.get_observation("cpu")
 
         if observation:
-            batch = next(iterator)
-
+            try:    
+                batch = next(iterator)
+            except: 
+                return # replay done 
+            
+            # execute next step
             action = batch["action"]
-
             model_to_action_trans.action_mode = ActionMode.DELTA_TCP
             action = model_to_action_trans.translate(action, observation)
             print_info(step, observation, action)
-
             robot_interface.send_action(action, model_to_action_trans.action_mode)
-            # policy._queues["action"].clear()
 
         # wait for execution to finish
         elapsed_time = time.time() - start_time
