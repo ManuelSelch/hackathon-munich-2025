@@ -1,12 +1,35 @@
 # Hackathon Munich 2025
-- `UI`: small webserver to trigger different modes
+
+### Architecture
+- `UI`: small webserver to trigger different modes -- **todo**
 - `Record`: record raw data using Meta Quest VR
-- `Train`: using recorded data to train policy
-- `Deploy`: Workflow contains multiple steps 
-    -> each step has its own policy 
-    -> save policy checkpoint for each step
-    -> decide based on state which policy to use next
+- `Robot`
+    - `convert()`: migrate ros dataset to LeRobot dataset
+    - `replay()`: replay episode 
+    - `train()`: using recorded data to train policy
+    - `deploy()`: deploy policy to execute a task
+- `Workflow` -- **todo**
+    - execute sequence of steps
+    - detect if a step failed (e.g. by gripper state) -> retry
+    - for simplicity transition to next step after a given duration
 
 ---
 
-- Error Handling: Retry current step
+### Workflow
+```mermaid
+flowchart TD;
+
+pickEcuHolder --> D1{"gripper fully closed?"}
+    D1 -- Yes --> placeEcuHolder
+    D1 -- No --> pickEcuHolder
+
+placeEcuHolder 
+    --> pickEcu
+    --> placeEcu 
+    --> pickNutA 
+    --> placeNutA 
+    --> pickNutB 
+    --> placeNutB 
+    --> done
+```
+
