@@ -7,7 +7,7 @@ from example_policies.data_ops.dataset_conversion import convert_episodes
 from example_policies.config_factory import act_config
 from example_policies import lerobot_patches
 from example_policies.train import train
-
+from converter import convert
 lerobot_patches.apply_patches()
 
 
@@ -33,18 +33,7 @@ class Robot:
         deploy_policy(policy, cfg, hz=INFERENCE_FREQUENCY_HZ, server=SERVER_ENDPOINT)
 
     def convert(self, data_dir: str, out_dir: str, label: str):
-        config = PipelineConfig(
-            task_name=label,
-            include_tcp_poses=True,
-            include_rgb_images=True,
-            include_depth_images=True,
-            # action_level=ActionLevel.DELTA_TCP,
-            action_level=ActionLevel.TCP,
-            target_fps=10,
-            max_pause_seconds=0.2,
-            min_episode_seconds=1,
-        )
-        convert_episodes(Path(data_dir), Path(out_dir), config)
+        convert(data_dir, out_dir, label)
 
     def train(self, data_dir: str):
         cfg = act_config(data_dir)

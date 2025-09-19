@@ -16,6 +16,7 @@ import argparse
 import json
 import pathlib
 import time
+from config.dataset_type import DatasetType
 
 # Workaround for torch / lerobot bug
 import numpy as np
@@ -25,6 +26,13 @@ from example_policies.data_ops.config import argparse_pipeline_config, pipeline_
 from example_policies.data_ops.pipeline.dataset_writer import DatasetWriter
 from example_policies.data_ops.pipeline.frame_buffer import FrameBuffer
 
+def _is_paused(self, joint_velocity: np.ndarray) -> bool:
+    """Checks if the robot is in a paused state."""
+    if np.sum(np.abs(joint_velocity)) < self.cfg.pause_velocity:
+        self.pause_detection_counter += 1
+    else:
+        self.pause_detection_counter = 0
+    return self.pause_detection_counter >= self.cfg.max_pause_frames
 
 def convert_episodes(
     episode_dir: pathlib.Path,
@@ -40,8 +48,6 @@ def convert_episodes(
     episode_paths = list(episode_dir.rglob("*.mcap"))
     # Sort by creation date (oldest first)
     episode_paths.sort(key=lambda p: p.stat().st_ctime)
-
-    now = time.time()
 
     actual_episode_counter = 0
     episode_counter_path_dict = {}
@@ -119,6 +125,8 @@ def convert_episodes(
             )
             continue
 
+    dataset_manager.remove_paused_frames()
+        
     with open(output_dir / "meta" / "episode_mapping.json", "w", encoding="utf-8") as f:
         json.dump(episode_counter_path_dict, f, indent=2)
 
@@ -127,7 +135,6 @@ def convert_episodes(
 
     with open(output_dir / "meta" / "blacklist.json", "w", encoding="utf-8") as f:
         json.dump(blacklist, f, indent=2)
-
 
 def save_episode(dataset, episode_idx, pause_dataset=None):
     """Save the current episode to the dataset."""

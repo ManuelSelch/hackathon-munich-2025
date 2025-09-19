@@ -67,6 +67,17 @@ class DatasetWriter:
                 output_dir, features, DatasetType.NO_SPEED_BOOST.value
             )
 
+    def remove_paused_frames(self):
+        """Removes all paused frames from the PAUSE dataset."""
+        pause_dataset = self.datasets.get(DatasetType.PAUSE)
+        if pause_dataset:
+            pause_dataset.clear_episode_buffer()  # clear all frames
+            self.dataset_frame_counter[DatasetType.PAUSE] = 0
+            print("All paused frames removed from PAUSE dataset.")
+        else:
+            print("No PAUSE dataset found, nothing to remove.")
+
+
     def reset(self):
         """Resets the dataset manager to its initial state."""
         self.dataset_frame_counter = {
