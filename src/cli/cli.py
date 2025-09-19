@@ -19,13 +19,13 @@ def main():
                 if len(cmd) < 2:
                     print("usage: replay <task>")
                 else:
-                    flow.run_replay(cmd[1], 0)
+                    flow.run_replay("/home/jovyan/", cmd[1], 0)
 
             if action == "deploy":
                 if len(cmd) < 2:
                     print("usage: deploy <task>")
                 else:
-                    flow.run_deploy(cmd[1])
+                    flow.run_deploy("/home/jovyan/"+cmd[1])
 
             elif action == "pause":
                 # flow.pause_task()
