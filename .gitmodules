@@ -1,0 +1,3 @@
+[submodule "src/openpi"]
+	path = src/openpi
+	url = git@github.com:ManuelSelch/openpi.git
