@@ -107,7 +107,8 @@ def inference_loop(
     input("Press Enter to continue...")
     # Inference Loop
     print("Starting inference loop...")
-    hz = 1.0
+    hz = 10
+    .0
     period = 1.0 / hz
     while True:
         start_time = time.time()

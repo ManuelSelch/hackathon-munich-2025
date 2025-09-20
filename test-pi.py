@@ -25,7 +25,7 @@ stub = robot_service_pb2_grpc.RobotServiceStub(channel)
 
 # step3: load config
 # use dummy episode to parse metadata
-data_dir = Path("/home/jovyan/pickEcu")
+data_dir = Path("/home/jovyan/train-data/pickEcu")
 ep_index = 0
 meta_data = load_metadata(data_dir)
 cfg = FakeConfig(meta_data)
@@ -55,7 +55,7 @@ print(action_chunk)
 
 
 # step 7: execute action
-robot_interface.send_action(
-    torch.from_numpy(action_chunk[None, :]),
-    ActionMode.ABS_TCP
-)
+#robot_interface.send_action(
+#    torch.from_numpy(action_chunk[None, :]),
+#    ActionMode.ABS_TCP
+#)
