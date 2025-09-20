@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import math
-from robot import Robot
+from robot.robot import Robot
 
 robot = Robot()
 
@@ -49,39 +49,47 @@ def detect_nearest_circle(frame, target):
 
     return nearest
 
-def calculate_error(target, detection):
-    pass
-
-def mark_frame(frame: cv2.typing.MatLike):
-    # target location
+def calculate_target(frame: cv2.typing.MatLike):
     h, w, _ = frame.shape
     x = w // 2 + 20
     y = h // 2 + 50
-    target = (x, y)
-    cv2.circle(frame, (x, y), 10, (0, 255, 0), 2)
+    return (x, y)
+
+def calculate_error(target, detection):
+    u, v, _ = detection
+    err_x = u - target[0]
+    err_y = v - target[1]
+    return (err_x, err_y)
+
+def move_error(err):
+    err_x, err_y = err
+
+    scale = 0.001           # 1px = 0.001 m
+    dx = -err_x * scale     # correct x error
+    dy = -err_y * scale     # correct y error
+    dz = -0.001             # move down slowly
+
+    # robot.move_left_arm(dx, dy, dz)
+
+def draw_error(target, detection):
+    x, y = target
+    u, v, r = detection
+
+    cv2.circle(frame, (target[0], target[1]), 10, (0, 255, 0), 2)
+    cv2.circle(frame, (u, v), int(r), (255, 0, 0), 2)
+    cv2.line(frame, (x, y), (u, v), (0, 0, 255), 2)
+
+def process_frame(frame: cv2.typing.MatLike):
+    # target location
+    target = calculate_target(frame)
 
     detection = detect_nearest_circle(frame, target)
     if detection:
-        # draw detected circle & error
-        u, v, r = detection
-        cv2.circle(frame, (u, v), int(r), (255, 0, 0), 2)
-        cv2.line(frame, (x, y), (u, v), (0, 0, 255), 2)
-
-        err_x = u - target[0]
-        err_y = v - target[1]
-        scale = 0.001 # 1px = 0.001 m
-        dx = -err_x * scale     # correct x error
-        dy = -err_y * scale     # correct y error
-        dz = -0.001             # move down slowly
-
-        robot.moveLeftArm(dx, dy, dz)
-        
-    # cv2.imshow("frame", frame)
-    # cv2.waitKey(1)
+        err = calculate_error(target, detection)
+        draw_error()
+        move_error(err)
 
     return frame
-
-
 
 # step 1: load each frame of video
 while video.isOpened():
@@ -89,7 +97,7 @@ while video.isOpened():
     if not ret: break
 
     # step 2: manipulate frame
-    processed = mark_frame(frame)
+    processed = process_frame(frame)
 
     # step 3: save frame to video
     out.write(processed)

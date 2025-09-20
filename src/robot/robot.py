@@ -3,12 +3,19 @@ from example_policies.robot_deploy import policy_loader
 from example_policies.robot_deploy.debug_helpers.replay_data import replay
 from pathlib import Path
 from example_policies.data_ops.config.pipeline_config import PipelineConfig, ActionLevel
+from example_policies.robot_deploy.robot_io.robot_interface import RobotInterface
+from example_policies.robot_deploy.debug_helpers.replay_data import FakeConfig
 from example_policies.data_ops.dataset_conversion import convert_episodes
+from example_policies.robot_deploy.policy_loader import load_metadata
 from example_policies.config_factory import act_config
+from example_policies.robot_deploy.action_translator import ActionTranslator, ActionMode
 from example_policies import lerobot_patches
 from example_policies.train import train
+from example_policies.robot_deploy.robot_io.robot_service import robot_service_pb2_grpc
+from lerobot.datasets.lerobot_dataset import LeRobotDataset
+import grpc
+import torch
 lerobot_patches.apply_patches()
-
 
 INFERENCE_FREQUENCY_HZ: float = 1.0
 SERVER_ENDPOINT = "192.168.0.206:50051"
@@ -50,5 +57,36 @@ class Robot:
         train(cfg)
         pass
 
-    def moveLeftArm(self, dx, dy, dz):
+    def move_left_arm(self, x, y, z):
+        # connect
+        channel = grpc.insecure_channel(SERVER_ENDPOINT)
+        stub = robot_service_pb2_grpc.RobotServiceStub(channel)
+
+        # load config
+        data_dir = Path("/home/jovyan/train-data/pickEcu")
+        ep_index = 0
+        meta_data = load_metadata(data_dir)
+        cfg = FakeConfig(meta_data)
+        dataset = LeRobotDataset(
+            repo_id="test",
+            root=data_dir,
+            episodes=[ep_index],
+        )
+
+        robot_interface = RobotInterface(stub, cfg)
+        model_to_action_trans = ActionTranslator(cfg)
+
+        # get current observation
+        observation = robot_interface.get_observation("cpu")
+        current_state = observation["state"].cpu().numpy() # returns array with 32 numbers
+        action = current_state[:14] 
+
+        # create action
+        action[0] += x
+        action[1] += y
+        action[2] += z
+        action = action[None, :]
+
+        # execute
+        robot_interface.send_action(torch.from_numpy(action),ActionMode.ABS_TCP)
         pass
