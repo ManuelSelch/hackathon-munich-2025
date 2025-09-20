@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import math
-from robot.robot import Robot
+from robot import Robot
 
 robot = Robot()
 
@@ -76,8 +76,8 @@ def mark_frame(frame: cv2.typing.MatLike):
 
         robot.moveLeftArm(dx, dy, dz)
         
-    cv2.imshow("frame", frame)
-    cv2.waitKey(1)
+    # cv2.imshow("frame", frame)
+    # cv2.waitKey(1)
 
     return frame
 
