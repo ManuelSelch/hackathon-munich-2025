@@ -78,7 +78,7 @@ class ObservationBuilder:
 
         print("last command", last_command.shape)
         if len(last_command) < 14:
-            #last_command = np.pad(last_command, (0, 14 - len(last_command)), mode="constant")
+            last_command = np.pad(last_command, (0, 14 - len(last_command)), mode="constant")
             print('its still to small!!')
         
 

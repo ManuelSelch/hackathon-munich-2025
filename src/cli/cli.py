@@ -23,7 +23,7 @@ def main():
                 else:
                     flow.run_replay("/home/jovyan/"+cmd[1], int(cmd[2]))
 
-            if action == "deploy":
+            elif action == "deploy":
                 if len(cmd) < 2:
                     print("usage: deploy <task>")
                 else:

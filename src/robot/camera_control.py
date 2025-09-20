@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
 import math
-from robot.robot import Robot
+from robot import Robot
 
 robot = Robot()
+robot.connect()
+
+robot.move_left_arm(0, 0, 0)
 
 # input: viddeo
 video_path = "test-video-h264.mp4"
@@ -84,22 +87,20 @@ def process_frame(frame: cv2.typing.MatLike):
     target = calculate_target(frame)
 
     detection = detect_nearest_circle(frame, target)
-    if detection:
-        err = calculate_error(target, detection)
-        draw_error()
-        move_error(err)
+    if detection is None: return frame
+        
+    err = calculate_error(target, detection)
+    draw_error(target, detection)
+    move_error(err)
 
     return frame
 
-# step 1: load each frame of video
-while video.isOpened():
-    ret, frame = video.read()
-    if not ret: break
-
-    # step 2: manipulate frame
+while True:
+    frame = robot.get_left_rgb()
     processed = process_frame(frame)
 
-    # step 3: save frame to video
+    if processed.dtype != np.uint8:
+        processed = np.clip(processed * 255, 0, 255).astype(np.uint8)
     out.write(processed)
 
 # done
