@@ -68,9 +68,13 @@ class Robot:
         train(config)
         pass
 
-    def move_left_arm(self, dx, dy, dz):
+    def _get_observation(self, key):
         observation = self.robot_interface.get_observation(self.config.device, show=False)
-        current_state = observation["observation.state"].cpu().numpy() # returns array with 32 numbers
+        print("Observation keys:", observation.keys())
+        return observation[key]
+
+    def move_delta_left_arm(self, dx, dy, dz):
+        current_state = self._get_observation("observation.state").cpu().numpy() # returns array with 32 numbers
         action = current_state[0, :14] # action for left arm, right arm & grippers
 
         # create action
@@ -84,25 +88,49 @@ class Robot:
         self.robot_interface.send_action(torch.from_numpy(action), ActionMode.ABS_TCP)
         pass
 
+    def move_abs_delta_left_arm(self, x, y, z):
+        current_state = self._get_observation("observation.state").cpu().numpy() # returns array with 32 numbers
+        action = current_state[0, :14] # action for left arm, right arm & grippers
+
+        # create action
+        print(action)
+        action[0] = x
+        action[1] = y
+        action[2] = z
+        action = action[None, :]
+
+        # execute
+        self.robot_interface.send_action(torch.from_numpy(action), ActionMode.ABS_TCP)
+        pass
 
     def get_left_rgb(self):
-        observation = self.robot_interface.get_observation(self.config.device, show=False)
-        print("Observation keys:", observation.keys())
-        
-        img_tensor = observation["observation.images.rgb_left"]  # shape: [1, 3, 640, 640]
-        print("Torch shape:", img_tensor.shape)
-
-        # remove batch dimension
+        img_tensor = self._get_observation("observation.images.rgb_left")
         img_tensor = img_tensor.squeeze(0)  # now shape: [3, 640, 640]
-        print("After squeeze:", img_tensor.shape)
-    
-        # convert to numpy
         img = img_tensor.cpu().numpy()       # shape: [3, 640, 640]
-    
-        # convert CHW -> HWC
         img = np.transpose(img, (1, 2, 0))  # now shape: [640, 640, 3]
-    
-        # convert RGB -> BGR for OpenCV
         img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    
         return img_bgr
+    
+    def get_left_depth(self):
+        depth_tensor = self._get_observation("observation.images.depth_left")
+        print("torch shape:", depth_tensor.shape)
+
+        # remove batch dimension if present
+        depth_tensor = depth_tensor.squeeze(0)  # now shape: [1, H, W] or [H, W]
+        print("after squeeze:", depth_tensor.shape)
+
+        # convert to numpy
+        depth = depth_tensor.cpu().numpy()
+
+        # If it still has a channel dim (e.g. [1, H, W]), squeeze it
+        if depth.ndim == 3:
+            depth = depth.squeeze(0)  # now shape: [H, W]
+
+        # Depth is usually in meters (float32), so for visualization we may normalize
+        depth_vis = cv2.normalize(depth, None, 0, 255, cv2.NORM_MINMAX)
+        depth_vis = np.uint8(depth_vis)
+
+        # Optional: apply colormap for visualization
+        depth_colormap = cv2.applyColorMap(depth_vis, cv2.COLORMAP_JET)
+
+        return depth, depth_colormap
