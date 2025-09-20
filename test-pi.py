@@ -14,22 +14,21 @@ from openpi.shared import download
 
 SERVER_ENDPOINT = "192.168.0.206:50051"
 
-# load policy
+# step 1: load policy
 config = _config.get_config("pi05_droid")
 checkpoint_dir = download.maybe_download("gs://openpi-assets/checkpoints/pi05_droid")
 policy = policy_config.create_trained_policy(config, checkpoint_dir)
 
-# connect to robot
+# step2: connect to robot
 channel = grpc.insecure_channel(SERVER_ENDPOINT)
 stub = robot_service_pb2_grpc.RobotServiceStub(channel)
-# data_cfg = DatasetConfig(repo_id=fake_repo_id, root=data_dir, episodes=[ep_index])
 
+# step3: load config
 # use dummy episode to parse metadata
 data_dir = Path("/home/jovyan/pickEcu")
 ep_index = 0
 meta_data = load_metadata(data_dir)
-cfg = FakeConfig()
-
+cfg = FakeConfig(meta_data)
 dataset = LeRobotDataset(
     repo_id="test",
     root=data_dir,
@@ -39,11 +38,11 @@ dataset = LeRobotDataset(
 robot_interface = RobotInterface(stub, cfg)
 model_to_action_trans = ActionTranslator(cfg)
 
-# get current state
+# step 4: get current observation
 observation = robot_interface.get_observation("cpu")
-current_state = observation["state"].cpu().numpy()
+current_state = observation["state"].cpu().numpy() # returns array with 32 numbers
 
-# run inference
+# step 5: convert observation to Pi Zero format
 example = {
     "observation": current_state,
     "prompt": "pick up the fork"
@@ -52,7 +51,10 @@ action_chunk = policy.infer(example)["actions"]
 
 print(action_chunk)
 
-# send action to robot
+# step 6: convert action to robot format
+
+
+# step 7: execute action
 robot_interface.send_action(
     torch.from_numpy(action_chunk[None, :]),
     ActionMode.ABS_TCP
