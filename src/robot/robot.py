@@ -84,7 +84,6 @@ class Robot:
         self.robot_interface.send_action(torch.from_numpy(action), ActionMode.ABS_TCP)
         pass
 
-
     def get_left_rgb(self):
         observation = self.robot_interface.get_observation(self.config.device, show=False)
         print("Observation keys:", observation.keys())

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import math
-from robot import Robot
+from robot.robot import Robot
 
 robot = Robot()
 robot.connect()
@@ -28,11 +28,12 @@ out = cv2.VideoWriter(
 lower_box = np.array([20, 31, 177], dtype=np.uint8)
 upper_box = np.array([70, 129, 255], dtype=np.uint8)
 
-def detect_nearest_circle(frame, target):
+def filter_range(frame, lower, upper):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, lower_box, upper_box)
+    return cv2.inRange(hsv, lower, upper)
 
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+def detect_nearest_circle(frame, target):
+    contours, _ = cv2.findContours(frame, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
         return None
 
@@ -72,7 +73,7 @@ def move_error(err):
     dy = -err_y * scale     # correct y error
     dz = -0.001             # move down slowly
 
-    # robot.move_left_arm(dx, dy, dz)
+    robot.move_left_arm(dx, dy, dz)
 
 def draw_error(target, detection):
     x, y = target
@@ -86,8 +87,10 @@ def process_frame(frame: cv2.typing.MatLike):
     # target location
     target = calculate_target(frame)
 
+    frame = filter_range(frame, lower_box, upper_box)
     detection = detect_nearest_circle(frame, target)
-    if detection is None: return frame
+    if detection is None: 
+        return frame # skip if no circle found
         
     err = calculate_error(target, detection)
     draw_error(target, detection)
