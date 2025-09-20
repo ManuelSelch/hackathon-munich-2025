@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import math
 from robot.robot import Robot
-
+from robot.translator import get_pixel_world_coordinate
 robot = Robot()
 robot.connect()
 
@@ -84,7 +84,6 @@ def draw_error(target, detection):
     cv2.line(frame, (x, y), (u, v), (0, 0, 255), 2)
 
 def process_frame(frame: cv2.typing.MatLike):
-    # target location
     target = calculate_target(frame)
 
     frame = filter_range(frame, lower_box, upper_box)
@@ -94,7 +93,12 @@ def process_frame(frame: cv2.typing.MatLike):
         
     err = calculate_error(target, detection)
     draw_error(target, detection)
-    move_error(err)
+
+    depth, _ = robot.get_left_depth()
+    u, v = detection[0], detection[1]
+    x, y, z = get_pixel_world_coordinate(u, v, depth[v, u])
+
+    robot.move_abs_delta_left_arm(x, y, z)
 
     return frame
 

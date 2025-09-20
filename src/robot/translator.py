@@ -103,9 +103,6 @@ def get_pixel_world_coordinate(
     pixel_u: int, 
     pixel_v: int, 
     depth_value: float,
-    camera_intrinsics: dict,
-    hand_eye_translation: list = [-0.008014187922463454, 0.10701197858990913, 0.025430542829620165],
-    hand_eye_rotation_quat: list = [0.3041858241574262, -0.0006167631890864009, 0.0023871846853336254, 0.952609524062254]
 ) -> Tuple[float, float, float]:
     """
     Get world coordinates for a single pixel.
@@ -121,6 +118,9 @@ def get_pixel_world_coordinate(
     Returns:
         Tuple[float, float, float]: World XYZ coordinates relative to robot TCP
     """
+
+    translation: list = [-0.008014187922463454, 0.10701197858990913, 0.025430542829620165],
+    rotation: list = [0.3041858241574262, -0.0006167631890864009, 0.0023871846853336254, 0.952609524062254]
     
     # Create a minimal depth map for this single pixel
     depth_map = np.zeros((pixel_v + 1, pixel_u + 1))
@@ -128,7 +128,7 @@ def get_pixel_world_coordinate(
     
     # Get world coordinates
     world_coords = depth_map_to_world_coordinates(
-        depth_map, camera_intrinsics, hand_eye_translation, hand_eye_rotation_quat
+        depth_map, get_realsense_d435_intrinsics(), translation, rotation
     )
     
     return tuple(world_coords[pixel_v, pixel_u])
