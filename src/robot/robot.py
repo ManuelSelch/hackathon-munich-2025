@@ -1,3 +1,6 @@
+import numpy as np
+import grpc
+from example_policies.robot_deploy.robot_io.robot_service import robot_service_pb2_grpc
 from example_policies.robot_deploy.deploy import deploy_policy
 from example_policies.robot_deploy import policy_loader
 from example_policies.robot_deploy.debug_helpers.replay_data import replay
@@ -7,6 +10,7 @@ from example_policies.data_ops.dataset_conversion import convert_episodes
 from example_policies.config_factory import act_config
 from example_policies import lerobot_patches
 from example_policies.train import train
+from example_policies.robot_deploy.debug_helpers.replay_data import FakeConfig
 lerobot_patches.apply_patches()
 
 
@@ -49,3 +53,37 @@ class Robot:
         cfg = act_config(data_dir)
         train(cfg)
         pass
+
+    def moveLeftArm(self, dx, dy, dz):
+        # connect
+        channel = grpc.insecure_channel(SERVER_ENDPOINT)
+        stub = robot_service_pb2_grpc.RobotServiceStub(channel)
+        # data_cfg = DatasetConfig(repo_id=fake_repo_id, root=data_dir, episodes=[ep_index])
+
+        meta_data = load_metadata(data_dir)
+        # Wrap in dictionary to emulate policy config
+        cfg = FakeConfig()
+
+        # We can then instantiate the dataset with these delta_timestamps configuration.
+        dataset = LeRobotDataset(
+            repo_id=fake_repo_id,
+            root=data_dir,
+            episodes=[ep_index],
+        )
+
+    robot_interface = RobotInterface(service_stub, cfg)
+    model_to_action_trans = ActionTranslator(cfg)
+
+    # get current state
+    observation = robot_interface.get_observation("cpu")
+    current_state = observation["state"].cpu().numpy()
+    tcp = current_state[:14].copy()  
+    
+    # modify current state using delta
+    tcp[0] += dx
+    tcp[1] += dy
+    tcp[2] += dz
+    action = current_state.copy()
+    action[:6] = tcp
+    action = action.astype(np.float32)[None, :]
+    pass
