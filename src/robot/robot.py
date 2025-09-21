@@ -88,7 +88,7 @@ class Robot:
         self.robot_interface.send_action(torch.from_numpy(action), ActionMode.ABS_TCP)
         pass
 
-    def move_abs_delta_left_arm(self, x, y, z):
+    def move_abs_left_arm(self, x, y, z):
         current_state = self._get_observation("observation.state").cpu().numpy() # returns array with 32 numbers
         action = current_state[0, :14] # action for left arm, right arm & grippers
 

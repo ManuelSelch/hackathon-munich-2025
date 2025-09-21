@@ -9,7 +9,7 @@ robot.connect()
 robot.move_left_arm(0, 0, 0)
 
 # input: viddeo
-video_path = "test-video-h264.mp4"
+video_path = "pickEcuHolder.mp4"
 video = cv2.VideoCapture(video_path)
 
 # parse video parameters
@@ -65,16 +65,6 @@ def calculate_error(target, detection):
     err_y = v - target[1]
     return (err_x, err_y)
 
-def move_error(err):
-    err_x, err_y = err
-
-    scale = 0.001           # 1px = 0.001 m
-    dx = -err_x * scale     # correct x error
-    dy = -err_y * scale     # correct y error
-    dz = -0.001             # move down slowly
-
-    robot.move_left_arm(dx, dy, dz)
-
 def draw_error(target, detection):
     x, y = target
     u, v, r = detection
@@ -98,17 +88,28 @@ def process_frame(frame: cv2.typing.MatLike):
     u, v = detection[0], detection[1]
     x, y, z = get_pixel_world_coordinate(u, v, depth[v, u])
 
-    robot.move_abs_delta_left_arm(x, y, z)
+    robot.move_abs_left_arm(x, y, z)
 
     return frame
 
-while True:
+while False:
     frame = robot.get_left_rgb()
     processed = process_frame(frame)
 
     if processed.dtype != np.uint8:
         processed = np.clip(processed * 255, 0, 255).astype(np.uint8)
     out.write(processed)
+
+while video.isOpened():
+    ret, frame = video.read()
+    if not ret: break
+
+    processed = process_frame(frame)
+
+    if processed.dtype != np.uint8:
+        processed = np.clip(processed * 255, 0, 255).astype(np.uint8)
+    out.write(processed)
+
 
 # done
 video.release()

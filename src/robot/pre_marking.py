@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # input: viddeo
-video_path = "test-video-h264.mp4"
+video_path = "pickEcuHolder.mp4"
 video = cv2.VideoCapture(video_path)
 
 # parse video parameters
