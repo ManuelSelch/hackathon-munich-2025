@@ -17,7 +17,7 @@
 
 ### Workflow
 ```mermaid
-flowchart TD;
+flowchart LR;
 
 Start 
     --> pickEcuHolder 
@@ -33,8 +33,35 @@ Start
     --> pickNutB 
     --> placeNutB 
 --> Done
+```
 
 
+### Simple Workflow
+
+
+```mermaid
+flowchart LR;
+
+Start 
+    --> pickEcuHolder 
+    --> placeEcuHolder 
+    --> pickEcu
+    --> placeEcu
+    --> pickNut 
+    --> placeNut 
+--> Done
+```
+
+### Architecture
+```mermaid
+flowchart TD;
+
+Web --> Workflow
+CLI --> Workflow
+CameraControl --> Robot
+Workflow --> Robot
+Robot --> Policy --> Franka
+Robot --gRPC--> Franka
 ```
 
 ### Debug
